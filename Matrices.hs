@@ -3,7 +3,9 @@ module Matrices
     Matriz, 
     numColumnas, 
     separa, 
-    matrizLista
+    matrizLista,
+    primeraPosicion,
+    ultimaPosicion
     ) where
 
 
@@ -35,3 +37,12 @@ separa n xss = (take n xss):separa n (drop n xss)
 -- Esto debería ir en el modulo de matriz
 matrizLista :: (Num a) => Matriz a -> [[a]]
 matrizLista p = (separa (numColumnas p) (elems p))
+
+-- ---------------------------------------------------------------------
+-- Func. para saber la primera posición de la matriz (0,0)
+primeraPosicion :: Matriz a -> (Int, Int)
+primeraPosicion m = fst (bounds m)
+
+-- Func. para saber la última posición de la matriz (n,m)
+ultimaPosicion :: Matriz a -> (Int, Int)
+ultimaPosicion m = snd (bounds m)
