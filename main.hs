@@ -9,32 +9,44 @@ import Data.Char
 import System.Environment
 import System.Directory
 import System.IO
-
-
--- ---------------------------------------------------------------------
--- Tipos de los vectores y de las matrices                            --
--- ---------------------------------------------------------------------
-
--- Los vectores son tablas cuyos índices son números naturales.
-type Vector a = Array Int a
- 
--- Las matrices son tablas cuyos índices son pares de números
--- naturales. 
-type Matriz a = Array (Int,Int) a
+import Matrices
 
 -- ---------------------------------------------------------------------
+type Mazmorra = Matriz Int
+-- data player 
+
 
 -- Recibe un numero y crea una mazmorra no resuelta de ese tamaño, indices de (1,1) a (n,n)
-nuevaMazmorra :: Num a => Int -> Matriz a
+nuevaMazmorra :: Int -> Mazmorra
 nuevaMazmorra n = listArray ((1,1), (f, c)) (concat xss)
    where f = length xss
          c = (length.head) xss 
          xss = replicate n . replicate n $ 1
 
 -- Imprime el estado actual de la mazmorra
-imprimeMazmorra :: (Show a, Num a) => Array (Int, Int) a -> IO ()
+imprimeMazmorra :: Mazmorra -> IO ()
 imprimeMazmorra arr = putStr (unlines [unwords [show (arr ! (x, y)) | x <- [1..n]] | y <- [1..n]])
     where n = (numColumnas arr)
+
+
+
+
+-- Comprueba condición de victoria
+finalizado :: Mazmorra -> Bool
+finalizado m =  m ! (x,x) == 0
+    where x = numColumnas m
+
+-- Resuelve sala, cambia el valor x,y de la matriz a 0
+resuelveSala :: (Int, Int) -> Mazmorra -> Mazmorra
+resuelveSala (x,y) ar = ar // [((x,y), 0)]
+
+
+
+
+
+
+--separa2 :: String -> [Int]
+--separa2 s = [read [c] | c <- s, c /= ',']
 
 -- Lee digito para seleccionar acción (por implementar)
 leeDigito :: String -> IO Int
@@ -47,38 +59,6 @@ leeDigito c = do
     then do return (read [x])
     else do putStrLn "ERROR: Entrada incorrecta"
             leeDigito c
-
--- Esto debería ir en el modulo de matriz
-numColumnas:: Num a => Matriz a -> Int
-numColumnas = snd . snd . bounds
-
--- Esto debería ir en el modulo de matriz
-separa :: Int -> [a] -> [[a]]
-separa _ [] = []
-separa n xss = (take n xss):separa n (drop n xss)
-
--- Esto debería ir en el modulo de matriz
-matrizLista :: Num a => Matriz a -> [[a]]
-matrizLista p = (separa (numColumnas p) (elems p))
-
--- Comprueba condición de victoria
-finalizado :: (Num a, Eq a) => Matriz a -> Bool
-finalizado m =  m ! (x,x) == 0
-    where x = numColumnas m
-
--- Resuelve sala, cambia el valor x,y de la matriz a 0
-resuelveSala :: (Num a) => (Int, Int) -> Matriz a -> Matriz a
-resuelveSala (x,y) ar = ar // [((x,y), 0)]
-
-
-
-
-
-
---separa2 :: String -> [Int]
---separa2 s = [read [c] | c <- s, c /= ',']
-
-
 
 -- (por implementar) lee partida guardada
 leerPartida :: IO (Int, [Int])
@@ -107,14 +87,34 @@ nuevoJuego = do
     putStrLn "2. Cargar partida de archivo"
     o <- leeDigito "Elija una opción: "
     if o == 2 then do
-          --n <- leeDigito "Elija una opción: "
-          -- (nuevaMazmorra n)
 --        (j,t) <- leerPartida
         putChar '\n'
 --        juego t j
         else do 
             putChar '\n'
---            nim
+              --n <- leeDigito "Elija una opción: "
+              -- let  = (nuevaMazmorra n)
+              -- let player = playerInicial
+--            turno mazmorra player
+
+turno :: Mazmorra -> Int -> IO ()
+turno m p = juego m p 
+
+juego :: Mazmorra -> Int -> IO ()
+juego = undefined
+--juego t j = do
+--    escribeTablero t
+--    if finalizado t
+--    then do putStrLn $ "J " ++ (show (siguiente j)) ++ "ha ganado"
+--    else do
+--        putStrLn $ "J " ++ (show j)
+--        f <- leeDigito "Escribe una fila: "
+--        n <- leeDigito "Elige cuantas estrellas retiras: "
+--        if valida t f n
+--        then do juego (jugada t f n) (siguiente j)
+--        else do putStrLn "Jugada no válida, inténtelo de nuevp. "
+--                juego t j
+
 
 main :: IO ()
 main = do
