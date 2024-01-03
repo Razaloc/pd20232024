@@ -1,10 +1,10 @@
 module Matrices
-( Vector
-, Matriz
-, numColumnas
-, separa
-, matrizLista
-) where
+    ( Vector, 
+    Matriz, 
+    numColumnas, 
+    separa, 
+    matrizLista
+    ) where
 
 
 import Data.Array
