@@ -1,12 +1,11 @@
 module Matrices
-    ( Vector, 
-    Matriz, 
-    numColumnas, 
-    separa, 
-    matrizLista,
-    primeraPosicion,
-    ultimaPosicion
-    ) where
+( Vector
+, Matriz
+, numColumnas
+, separa
+, matrizLista
+, listaMatriz
+) where
 
 
 import Data.Array
@@ -25,16 +24,17 @@ type Vector a = Array Int a
 -- naturales. 
 type Matriz a = Array (Int,Int) a
 
--- Esto debería ir en el modulo de matriz
 numColumnas :: (Num a) => Matriz a -> Int
 numColumnas = snd . snd . bounds
 
--- Esto debería ir en el modulo de matriz
 separa :: Int -> [a] -> [[a]]
 separa _ [] = []
 separa n xss = (take n xss):separa n (drop n xss)
 
--- Esto debería ir en el modulo de matriz
 matrizLista :: (Num a) => Matriz a -> [[a]]
 matrizLista p = (separa (numColumnas p) (elems p))
 
+listaMatriz :: Num a => [[a]] -> Matriz a
+listaMatriz xss = listArray ((1,1), (f, c)) (concat xss)
+   where f = length xss
+         c = (length.head) xss 
