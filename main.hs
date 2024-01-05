@@ -1,8 +1,9 @@
 -- PD: miniproyecto
 -- Juego de aventuras.
 -- Universidad de Sevilla
+-- Rafael Garcia y Elena Ayora
 -- =====================================================================
-
+{-# LANGUAGE OverloadedStrings #-}
 import Data.Array
 import Data.Ratio
 import Data.Char
@@ -12,6 +13,8 @@ import System.IO
 import Matrices
 
 -- ---------------------------------------------------------------------
+
+type Partida = (Mazmorra, Aventurero)
 -- El tipo mazmorra representa el estado actual de la partida, es una matriz de ceros y unos que representan si una sala está resuelta o no.
 type Mazmorra = Matriz Int
 -- Tipo posición, coordenadas dentro de la mazmorra.
@@ -37,48 +40,45 @@ nuevaMazmorra n = listArray ((1,1), (f, c)) (concat xss)
          xss = replicate n . replicate n $ 1
 
 -- Imprime aventurero
-imprimeAventurero :: Aventurero -> IO ()
-imprimeAventurero a = putStrLn (show a) 
+imprimeAventurero :: Partida -> IO ()
+imprimeAventurero (_,a) = putStrLn (show a) 
 
 -- Aventurero en formato texto para guardado
 textoAventurero :: Aventurero -> String
-textoAventurero a = (nombre a) ++ "\n" ++ (show (posicion a)) ++ (show (vida a)) ++ "\n" ++ (show (nivel a)) ++ "\n" ++ (show (mochila a) )
+textoAventurero a = (nombre a) ++ "\n" ++ (show (posicion a)) ++ "\n" ++ (show (vida a)) ++ "\n" ++ (show (nivel a)) ++ "\n" ++ (show (mochila a) )
 
 
 -- Imprime el estado actual de la mazmorra en pantalla
-imprimeMazmorra :: Mazmorra -> IO ()
-imprimeMazmorra arr = putStr (unlines [unwords [show (arr ! (x, y)) | x <- [1..n]] | y <- [1..n]])
-    where n = (numColumnas arr)
+imprimeMazmorra :: Partida -> IO ()
+imprimeMazmorra (m,a) = putStr (unlines [unwords [show (mx ! (x, y)) | x <- [1..n]] | y <- [1..n]])
+    where n = (numColumnas m)
+          mx = m // [((posicion a), 5)]
 
 -- Mazmorra en formato texto para guardado
 textoMazmorra :: Mazmorra -> String
-textoMazmorra m =  show (matrizLista m)
+textoMazmorra m =  show (matrizLista m) ++ "\n" 
 
 -- Texto de la info esencial de la partida
-textoPartida :: (Mazmorra, Aventurero) -> String
-textoPartida (m,a) = (textoMazmorra m) ++ "/n" ++ (textoAventurero a)
+textoPartida :: Partida-> String
+textoPartida (m,a) = (textoMazmorra m) ++ (textoAventurero a)
 
 
 -- Comprueba condición de victoria
-finalizado :: Mazmorra -> Bool
-finalizado m =  m ! (x,x) == 0
+finalizado :: Partida -> Bool
+finalizado (m, _) =  m ! (x,x) == 0
     where x = numColumnas m
 
 -- Resuelve sala, cambia el valor (x, y) de la matriz a 0
-resuelveSala :: Pos -> Mazmorra -> Mazmorra
-resuelveSala (x,y) ar = ar // [((x,y), 0)]
+resuelveSala :: Partida -> Partida
+resuelveSala (mazmorra, aventurero) = (mazmorra // [((posicion aventurero), 0)], aventurero)
 
 --Consulta si la sala ha sido resuelta
-esResueltaSala :: Pos -> Mazmorra -> Bool
-esResueltaSala (x,y) m =  m ! (x,y) == 0
+esResueltaSala :: Partida -> Bool
+esResueltaSala  (m,a) =  m ! (posicion a) == 0
 
 -- Cambia el valor x,y de la matriz. De momento sin utilidad. 
 cambiaValorSala :: Pos -> Mazmorra -> Int -> Mazmorra
 cambiaValorSala (x,y) ar a = ar // [((x,y), a)]
-
-
---separa2 :: String -> [Int]
---separa2 s = [read [c] | c <- s, c /= ',']
 
 -- Lee digito para seleccionar acción (por implementar)
 leeDigito :: String -> IO Int
@@ -92,21 +92,27 @@ leeDigito c = do
     else do putStrLn "ERROR: Entrada incorrecta"
             leeDigito c
 
--- (por implementar) lee partida guardada
---cargarPartida ::  IO (Mazmorra, Aventurero)
---cargarPartida = do
---    putChar '\n'
---    putStrLn "Indique el nombre del archivo: "
---    f <- getLine -- para leer una línea entera (coge una cadena de caracteres)
---    existe <- doesFileExist f
---    if existe then do
---        contenido <- readFile f
---        let lineas  = lines contenido
---        let aventurero = read (head lineas)
---        let heroe = Aventurero {nombre = nombre , vida = vida, nivel = nivel, mochila = mochila}
---        return (mazmorra, heroe)
---        else do putStrLn "El archivo indicado no existe, intételo de nuevo"
---                cargarPartida
+separa2 :: String -> [Int]
+separa2 s = [read [c] | c <- s, c /= ',']
+
+cargarPartida :: IO ()
+cargarPartida = do 
+    putChar '\n'
+    existe <- doesFileExist "guarda.txt"
+    if existe then do
+        contenido <- readFile "guarda.txt"
+        let lineas  = lines contenido
+        let mazmorra = read (head lineas)
+        let
+            nombre = lineas !! 1
+            posicion = ([ x | x <- separa2 (lineas !! 2)]!!0, [ x | x <- separa2 (lineas !! 2)]!!1)  
+            vida = read (lineas !! 3)
+            nivel = read (lineas !! 4)
+            mochila = read (lineas !! 5)
+        juego (listaMatriz mazmorra, nuevoAventurero {nombre = nombre, posicion = posicion, vida = vida, nivel = nivel, mochila = mochila})
+        else do
+            putStrLn "No hay ninguna partida guardada." 
+            nuevoJuego
 
 
 guardaPartida :: (Mazmorra, Aventurero) -> IO ()
@@ -116,106 +122,74 @@ guardaPartida (m, a) = writeFile "guarda.txt" $ textoPartida (m, a)
 actualizaAventurero :: Aventurero -> Pos -> Aventurero
 actualizaAventurero a (x,y) =  a {posicion = (x,y)}  
 
-
+suma :: (Num a, Num b) => (a, b) -> (a, b) -> (a, b)
 suma (x, y) (u, v) = (x+u, y+v)
 
--- Nuevo juego (por implementar)
+mueveNorte :: Partida -> Partida
+mueveNorte (m,aventurero) = (m,(aventurero { posicion = (suma (posicion aventurero) (0,-1))}))
+
+mueveSur :: Partida -> Partida
+mueveSur (m,aventurero) = (m,(aventurero { posicion = (suma (posicion aventurero) (0,1))}))
+
+mueveEste :: Partida -> Partida
+mueveEste (m,aventurero) = (m,(aventurero { posicion = (suma (posicion aventurero) (1,0))}))
+
+mueveOeste :: Partida -> Partida
+mueveOeste (m,aventurero) = (m,(aventurero { posicion = (suma (posicion aventurero) (-1,0))}))
+
+posicionValida :: Partida -> Bool
+posicionValida (m,a)
+    | fst(posicion a) <= 0 = False
+    | fst(posicion a) > z = False 
+    | snd(posicion a) <= 0 = False 
+    | snd(posicion a) > z = False 
+    | otherwise = True
+    where z = numColumnas m
+
+mueve :: Partida -> Int -> Partida
+mueve p@(m,a) n
+    | n == 1 =  (m, a{posicion = posicion (snd (mueveNorte p))})
+    | n == 2 =  (m, a{posicion = posicion (snd (mueveSur p))})
+    | n == 3 =  (m, a{posicion = posicion (snd (mueveEste p))})
+    | n == 4 =  (m, a{posicion = posicion (snd (mueveOeste p))})
+    | otherwise = p
+
+-- Nuevo juego (con opcion a carga de partida por implementar)
 nuevoJuego :: IO ()
---nuevoJuego = undefined
 nuevoJuego = do
     putStrLn "1. Nuevo juego"
     putStrLn "2. Cargar partida de archivo"
     o <- leeDigito "Elija una opción: "
     if o == 2 then do
---        (maz,avent) <- cargarPartida
         putChar '\n'
---        juego maz avent
+        cargarPartida
         else do 
             putChar '\n'
             n <- leeDigito "Elije un tamaño de la mazmorra que quieres visitar: "
-            juego (nuevaMazmorra n) nuevoAventurero
+            juego ((nuevaMazmorra n), nuevoAventurero)
 
---imposiblePosicion :: Pos -> Mazmorra -> Bool
---imposiblePosicion (x, y) m
---    | x <= 0 = False
---    | x > z = False 
---    | y <= 0 = False 
---    | y > z = False 
---    | otherwise = True
---    where z = numColumnas m
-
---regulate ::  IO Int ->  Int 
---regulate n = case n of
---    1 -> 1
---    2 -> 2
---    3 -> 3
---    4 -> 4
---    otherwise  -> 0
---        
-
--- Indica el movimiento deseado, ante un input no valido el movimiento será (0,0)
---movimiento :: Int -> Pos
---movimiento o = 
---    case o of
---        1 -> (1,0)
---        2 -> (1,0)
---        3 -> (1,0)
---        4 -> (1,0)
---        otherwise  -> (0,0)
-
---preguntaMovimiento ::  IO Int
---preguntaMovimiento = do
---    putStrLn "Indica hacia donde quieres moverte: " 
---    putStrLn "1. Norte"
---    putStrLn "2. Sur"
---    putStrLn "3. Este"
---    putStrLn "4. Oeste"
---    o <- leeDigito "Elija una opción: "
---    return o
-
-juego :: Mazmorra -> Aventurero -> IO ()
-juego mazmorra aventurero = do
-    imprimeAventurero aventurero
-    imprimeMazmorra mazmorra
+juego :: Partida -> IO ()
+juego partida@(mazmorra, aventurero) = do
+--    guardaPartida partida
+    imprimeAventurero partida
+    imprimeMazmorra partida
     -- Comienza un turno normal
     -- Display contenido de sala
     -- Resuelve la sala
-    let postMazmorra = resuelveSala (posicion aventurero) mazmorra
+    if esResueltaSala partida 
+        then do putStrLn "Ya no hay nada nuevo en esta sala. Ya habías pasado por aquí."
+        else do putStrLn "¡Ocurre un encuentro!"
+
+    let postEncuentro = resuelveSala partida
     -- Comprueba la condición de victoria
-    if not (finalizado mazmorra) then do
-        putStrLn "Elige en que dirección deseas moverte: "
-
--- movimiento recibe aventurero y deuelve aventurero al que hay que comprobar si la posición es válida.
---        let movimienDeseado = movimiento (regulate (preguntaMovimiento))
---        let postAventurero = actualizaAventurero aventurero movimienDeseado 
---        validar posicion 
---        if imposiblePosicion (posicion postAventurero) mazmorra then do
---            putStrLn "No puedes moverte en esa dirección, intentalo de nuevo"
---            juego postMazmorra aventurero
---            else 
---                juego postMazmorra postAventurero
-        else
-            putStrLn "Enhorabuena has ganado"
---    if (esResueltaSala posicion mazmorra) then do
---        let actualizadoAventurero = movimiento aventurero
---        putStrLn "Esta sala ya ha sido resuelta, ¿hacia donde deseas ir?"
---        else do
---            resuelveSala posicion mazmorra
---            putStrLn "¡Explorando una nueva sala encontraste algo!"
-
-
-
---    escribeTablero t
---    if finalizado t
---    then do putStrLn $ "J " ++ (show (siguiente j)) ++ "ha ganado"
---    else do
---        putStrLn $ "J " ++ (show j)
---        f <- leeDigito "Escribe una fila: "
---        n <- leeDigito "Elige cuantas estrellas retiras: "
---        if valida t f n
---        then do juego (jugada t f n) (siguiente j)
---        else do putStrLn "Jugada no válida, inténtelo de nuevp. "
---                juego t j
+    if not (finalizado postEncuentro) then do
+        n <- leeDigito "Elige en que dirección deseas moverte: usa las flechas para elegir: \n 1.Norte \n 2.Sur \n 3.Este \n 4.Oeste \n"
+        let postMovimiento = mueve postEncuentro n
+        if posicionValida postMovimiento then do juego postMovimiento 
+        else do putStrLn "Jugada no válida, inténtelo de nuevo."
+                juego postEncuentro
+    else do
+        putStrLn "Enhorabuena has ganado. FIN DEL JUEGO."
 
 
 main :: IO ()
