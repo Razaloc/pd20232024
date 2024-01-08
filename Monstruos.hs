@@ -11,6 +11,7 @@ module Monstruos
     listaMonstruos,
     imprimeMonstruo
     ) where
+
 -- Definición del tipo de dato: Monstruo
 data Monstruo = Monstruo
     { nombreMonstruo :: String,
@@ -51,7 +52,7 @@ obtenerRecompensaMonstruo = recompensa
 -- Lista de monstruos (20 monstruos)
 listaMonstruos :: [Monstruo]
 listaMonstruos =
-    [ crearMonstruo "Esqueleto Decrépito" 15 5 esqueletoArte ("Espada de hueso", 5)
+    [ crearMonstruo "Esqueleto Decrepito" 15 5 esqueletoArte ("Espada de hueso", 5)
     , crearMonstruo "Araña Venenosa" 12 8 aranaArte ("Daga envenenada", 8)
 --    , crearMonstruo "Ogro Descomunal" 30 12
 --    , crearMonstruo "Fantasma Susurrante" 18 7
@@ -92,3 +93,5 @@ esqueletoArte = "      .-.\n\
                   \    ==' '=="
 
 aranaArte = ""
+
+
