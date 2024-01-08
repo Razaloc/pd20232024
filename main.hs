@@ -16,7 +16,7 @@ import Matrices
 
 type Partida = (Mazmorra, Aventurero)
 -- El tipo mazmorra representa el estado actual de la partida, es una matriz de ceros y unos que representan si una sala está resuelta o no.
-type Mazmorra = Matriz Int
+type Mazmorra = Matriz Char
 -- Tipo posición, coordenadas dentro de la mazmorra.
 type Pos = (Int, Int)
 
@@ -37,7 +37,7 @@ nuevaMazmorra :: Int -> Mazmorra
 nuevaMazmorra n = listArray ((1,1), (f, c)) (concat xss)
    where f = length xss
          c = (length.head) xss 
-         xss = replicate n . replicate n $ 1
+         xss = replicate n . replicate n $ '?'
 
 -- Imprime aventurero
 imprimeAventurero :: Partida -> IO ()
@@ -52,7 +52,7 @@ textoAventurero a = (nombre a) ++ "\n" ++ (show (posicion a)) ++ "\n" ++ (show (
 imprimeMazmorra :: Partida -> IO ()
 imprimeMazmorra (m,a) = putStr (unlines [unwords [show (mx ! (x, y)) | x <- [1..n]] | y <- [1..n]])
     where n = (numColumnas m)
-          mx = m // [((posicion a), 5)]
+          mx = m // [((posicion a), 'X')]
 
 -- Mazmorra en formato texto para guardado
 textoMazmorra :: Mazmorra -> String
@@ -65,19 +65,19 @@ textoPartida (m,a) = (textoMazmorra m) ++ (textoAventurero a)
 
 -- Comprueba condición de victoria
 finalizado :: Partida -> Bool
-finalizado (m, _) =  m ! (x,x) == 0
+finalizado (m, _) =  m ! (x,x) == 'O'
     where x = numColumnas m
 
 -- Resuelve sala, cambia el valor (x, y) de la matriz a 0
 resuelveSala :: Partida -> Partida
-resuelveSala (mazmorra, aventurero) = (mazmorra // [((posicion aventurero), 0)], aventurero)
+resuelveSala (mazmorra, aventurero) = (mazmorra // [((posicion aventurero), 'O')], aventurero)
 
 --Consulta si la sala ha sido resuelta
 esResueltaSala :: Partida -> Bool
-esResueltaSala  (m,a) =  m ! (posicion a) == 0
+esResueltaSala  (m,a) =  m ! (posicion a) == 'O'
 
 -- Cambia el valor x,y de la matriz. De momento sin utilidad. 
-cambiaValorSala :: Pos -> Mazmorra -> Int -> Mazmorra
+cambiaValorSala :: Pos -> Mazmorra -> Char -> Mazmorra
 cambiaValorSala (x,y) ar a = ar // [((x,y), a)]
 
 -- Lee digito para seleccionar acción (por implementar)
@@ -172,6 +172,7 @@ nuevoJuego = do
 juego :: Partida -> IO ()
 juego partida@(mazmorra, aventurero) = do
     guardaPartida partida
+    putStrLn "\n\n\n\n\n\n\n\n\n\n\n"
     imprimeAventurero partida
     imprimeMazmorra partida
     -- Comienza un turno normal
