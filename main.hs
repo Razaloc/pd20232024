@@ -182,8 +182,10 @@ juego partida@(mazmorra, aventurero) = do
     if esResueltaSala partida 
         then do
             putStrLn "Ya no hay nada nuevo en esta sala. Ya habías pasado por aquí."
-            siguienteTurno partida
-
+            if not (finalizado partida) then do
+                siguienteTurno partida
+                else do
+                    putStrLn "Enhorabuena has ganado. FIN DEL JUEGO."
         else do 
             -- Muestra el contenido de la sala
             putStrLn "¡Ocurre un encuentro!"
@@ -201,22 +203,26 @@ juego partida@(mazmorra, aventurero) = do
                     nuevoJuego
                 else do 
                     let recompensadoPartida = obtieneObjeto aventureroHerido (obtenerRecompensaMonstruo enemigo)
-        -- postEscuentro -->estado de la partidadespuésdelencuentro, se modifica el estado de la sala cambia a 0
+        -- postEscuentroExito -->estado de la partidadespuésdelencuentro con lucha, se modifica el estado de la sala cambia a 0
                     let postEncuentroExito = resuelveSala (mazmorra, recompensadoPartida)
                     putStrLn ("Obtienes la recompensa:                " ++ (fst (obtenerRecompensaMonstruo enemigo)) ++ ". Con una fuerza de: " ++(show (snd (obtenerRecompensaMonstruo enemigo))))
-                    siguienteTurno postEncuentroExito
+                    if not (finalizado postEncuentroExito) then do
+                        siguienteTurno postEncuentroExito
+                        else do
+                            putStrLn "Enhorabuena has ganado. FIN DEL JUEGO."
 
             else do 
-        -- postEscuentro -->estado de la partidadespuésdelencuentro, se modifica el estado de la sala cambia a 0
+        -- postEscuentro -->estado de la partidadespuésdelencuentro sins lucha, se modifica el estado de la sala cambia a 0
                 let postEncuentroHuida = resuelveSala partida
                 putStrLn "\n\n\n\n\n\n\n\n\n\n\n"
                 putStrLn "Huiste del monstruo pero no obtendrás recompensa en esta sala."
-                if not (finalizado partida) then do
+        -- Comprueba la condición de victoria
+                if not (finalizado postEncuentroHuida) then do
                     siguienteTurno postEncuentroHuida
                     else do
                         putStrLn "Enhorabuena has ganado. FIN DEL JUEGO."
 
-
+-- Consulta la direccion del movimiento y llama al siguiente turno
 siguienteTurno :: Partida -> IO ()
 siguienteTurno partida = do 
     imprimeMazmorra partida
@@ -229,17 +235,6 @@ siguienteTurno partida = do
     else do 
         putStrLn "Jugada no válida, inténtelo de nuevo."
         juego partida
-    
-
-{- 
-
-
-
-    -- Comprueba la condición de victoria
-    
-
-
--}
 
 main :: IO ()
 main = do
