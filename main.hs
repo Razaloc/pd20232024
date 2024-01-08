@@ -175,8 +175,6 @@ juego :: Partida -> IO ()
 juego partida@(mazmorra, aventurero) = do
     guardaPartida partida
     putStrLn "\n\n\n\n\n\n\n\n\n\n\n"
-    imprimeMazmorra partida
-    imprimeAventurero partida
     -- Comienza un turno normal
     -- Resuelve la sala
     if esResueltaSala partida 
