@@ -105,7 +105,7 @@ cargarPartida = do
         let mazmorra = read (head lineas)
         let
             nombre = lineas !! 1
-            posicion = ([ x | x <- separa2 (lineas !! 2)]!!0, [ x | x <- separa2 (lineas !! 2)]!!1)  
+            posicion = ([ x | x <- separa2 (lineas !! 2)]!!1, [ x | x <- separa2 (lineas !! 2)]!!3)  
             vida = read (lineas !! 3)
             nivel = read (lineas !! 4)
             mochila = read (lineas !! 5)
@@ -125,6 +125,7 @@ actualizaAventurero a (x,y) =  a {posicion = (x,y)}
 suma :: (Num a, Num b) => (a, b) -> (a, b) -> (a, b)
 suma (x, y) (u, v) = (x+u, y+v)
 
+-- Funciones de gestion del movimiento del aventurero
 mueveNorte :: Partida -> Partida
 mueveNorte (m,aventurero) = (m,(aventurero { posicion = (suma (posicion aventurero) (0,-1))}))
 
@@ -170,7 +171,7 @@ nuevoJuego = do
 
 juego :: Partida -> IO ()
 juego partida@(mazmorra, aventurero) = do
---    guardaPartida partida
+    guardaPartida partida
     imprimeAventurero partida
     imprimeMazmorra partida
     -- Comienza un turno normal
@@ -180,10 +181,13 @@ juego partida@(mazmorra, aventurero) = do
         then do putStrLn "Ya no hay nada nuevo en esta sala. Ya habías pasado por aquí."
         else do putStrLn "¡Ocurre un encuentro!"
 
+    -- postEscuentro -->estado de la partidadespuésdelencuentro, se modifica el estado de la sala cambia a 0
     let postEncuentro = resuelveSala partida
     -- Comprueba la condición de victoria
     if not (finalizado postEncuentro) then do
         n <- leeDigito "Elige en que dirección deseas moverte: usa las flechas para elegir: \n 1.Norte \n 2.Sur \n 3.Este \n 4.Oeste \n"
+
+    -- postMovimiento -->estado de la partidadespués del movimiento, la posicion del aventurero cambia
         let postMovimiento = mueve postEncuentro n
         if posicionValida postMovimiento then do juego postMovimiento 
         else do putStrLn "Jugada no válida, inténtelo de nuevo."
