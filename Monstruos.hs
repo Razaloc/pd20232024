@@ -5,25 +5,30 @@ module Monstruos
     crearMonstruo, 
     obtenerNombreMonstruo,
     obtenerPuntosVidaMonstruo, 
-    obtenerPuntosAtaqueMonstruo, 
-    listaMonstruos
+    obtenerPuntosAtaqueMonstruo,
+    obtenerArteMonstruo,
+    obtenerRecompensaMonstruo, 
+    listaMonstruos,
+    imprimeMonstruo
     ) where
-
 -- Definición del tipo de dato: Monstruo
 data Monstruo = Monstruo
     { nombreMonstruo :: String,
       puntosVidaMonstruo :: Int,
       puntosAtaqueMonstruo :: Int,
-      arte :: String
+      arte :: String,
+      recompensa :: (String, Int)
+
     } deriving (Show)
 
 
-crearMonstruo :: String -> Int -> Int -> String -> Monstruo
-crearMonstruo nombre vida ataque dibujo = Monstruo
+crearMonstruo :: String -> Int -> Int -> String -> (String, Int) -> Monstruo
+crearMonstruo nombre vida ataque dibujo premio= Monstruo
     { nombreMonstruo = nombre,
       puntosVidaMonstruo = vida,
       puntosAtaqueMonstruo = ataque,
-      arte = dibujo
+      arte = dibujo,
+      recompensa = premio
     }
 
 
@@ -37,11 +42,17 @@ obtenerPuntosVidaMonstruo = puntosVidaMonstruo
 obtenerPuntosAtaqueMonstruo :: Monstruo -> Int
 obtenerPuntosAtaqueMonstruo = puntosAtaqueMonstruo
 
+obtenerArteMonstruo :: Monstruo -> String
+obtenerArteMonstruo = arte
+
+obtenerRecompensaMonstruo :: Monstruo -> (String, Int)
+obtenerRecompensaMonstruo = recompensa
+
 -- Lista de monstruos (20 monstruos)
 listaMonstruos :: [Monstruo]
 listaMonstruos =
-    [ crearMonstruo "Esqueleto Decrépito" 15 5 esqueletoArte
---    , crearMonstruo "Araña Venenosa" 12 8 
+    [ crearMonstruo "Esqueleto Decrépito" 15 5 esqueletoArte ("Espada de hueso", 5)
+    , crearMonstruo "Araña Venenosa" 12 8 aranaArte ("Daga envenenada", 8)
 --    , crearMonstruo "Ogro Descomunal" 30 12
 --    , crearMonstruo "Fantasma Susurrante" 18 7
 --    , crearMonstruo "Gárgola Petrificante" 25 10
@@ -79,3 +90,5 @@ esqueletoArte = "      .-.\n\
                   \     || ||\n\
                   \     || ||\n\
                   \    ==' '=="
+
+aranaArte = ""
