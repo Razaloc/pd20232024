@@ -173,7 +173,6 @@ nuevoJuego = do
 --Ejecución de un turno
 juego :: Partida -> IO ()
 juego partida@(mazmorra, aventurero) = do
-    removeFile "guarda.txt"
     guardaPartida partida
     putStrLn "\n\n\n\n\n\n\n\n\n\n\n"
     imprimeMazmorra partida

@@ -92,6 +92,9 @@ esqueletoArte = "      .-.\n\
                   \     || ||\n\
                   \    ==' '=="
 
-aranaArte = ""
+aranaArte = "  / _ \\\n\
+\\\_\\(_)/_/\n\
+\ _//o\\\\_ \n\
+\  /   \\"
 
 
