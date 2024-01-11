@@ -52,27 +52,15 @@ obtenerRecompensaMonstruo = recompensa
 -- Lista de monstruos (20 monstruos)
 listaMonstruos :: [Monstruo]
 listaMonstruos =
-    [ crearMonstruo "Limo de Moco Asqueroso" 5 1 limoArte ("palo con babas", 2)
-    , crearMonstruo "Araña Venenosa" 12 8 aranaArte ("Daga envenenada", 5)
-    , crearMonstruo "Esqueleto Decrepito" 15 5 esqueletoArte ("Espada de hueso", 8)
-    , crearMonstruo "Ogro Descomunal" 30 12 ogreArte ("Baston Descomunal", 10)
---    , crearMonstruo "Fantasma Susurrante" 18 7
---    , crearMonstruo "Gárgola Petrificante" 25 10
---    , crearMonstruo "Hombre Lobo Hambriento" 22 9
---    , crearMonstruo "Elemental de Fuego" 35 15
---    , crearMonstruo "Nigromante Oscuro" 20 8
---    , crearMonstruo "Quimera Alada" 28 14
---    , crearMonstruo "Demonio del Abismo" 40 20
---    , crearMonstruo "Serpiente Gigante" 15 6
---    , crearMonstruo "Goblin Astuto" 10 4
---    , crearMonstruo "Cíclope Furioso" 32 18
---    , crearMonstruo "Banshee Gélida" 25 11
---    , crearMonstruo "Escorpión Venenoso" 18 7
---    , crearMonstruo "Minotauro Desorientado" 28 13
---    , crearMonstruo "Hidra de las Sombras" 45 22
---    , crearMonstruo "Orco Frenético" 20 10s
---    , crearMonstruo "Cazador de Almas" 30 16
---    , crearMonstruo "Dragón de Pesadilla" 50 25
+    [ crearMonstruo "Dummy" 1 1 "" ("", 1)
+    , crearMonstruo "Limo de Moco Asqueroso" 2 1 limoArte ("palo con babas", 2)
+    , crearMonstruo "Araña Venenosa" 5 3 aranaArte ("Daga envenenada", 5)
+    , crearMonstruo "Esqueleto Decrepito" 7 5 esqueletoArte ("Espada de hueso", 8)
+    , crearMonstruo "Ogro Descomunal" 10 7 ogreArte ("Baston Descomunal", 10)
+    , crearMonstruo "Hombre Lobo Hambriento" 12 8 hloboArte ("Garras de lobo", 13)
+    , crearMonstruo "Serpiente Gigante" 14 9 serpienteArte ("Lanza envenenada", 16)
+    , crearMonstruo "Minotauro Desorientado" 16 10 minotauroArte ("Baston Descomunal", 10)
+    , crearMonstruo "Dragón de Pesadilla" 20 10 dragonArte ("Espada del elegido", 999)
     ]
 --  imprimeMonstruo (arte (listaMonstruos !!0))
 imprimeMonstruo :: String -> IO ()
@@ -141,3 +129,61 @@ ogreArte = "                           __,='`````'=/__\n\
 \                       |      |    |      |\n\
 \                        \\,---_|    |_---./\n\
 \                        ooOO(_)    (_)OOoo"
+
+minotauroArte = "                            .      .\n\
+\                            |\\____/|\n\
+\                           (\\|----|/)\n\
+\                            \\ 0  0 /\n\
+\                             |    |\n\
+\                          ___/\\../\\____\n\
+\                         /     --       \\\n\
+\                        /  \\         /   \\\n\
+\                       |    \\___/___/(   |\n\
+\                       \\   /|  }{   | \\  )\n\
+\                        \\  ||__}{__|  |  |\n\
+\                         \\  |;;;;;;;\\  \\ / \\_______\n\
+\                          \\ /;;;;;;;;| [,,[|======'\n\
+\                            |;;;;;;/ |     /\n\
+\                            ||;;|\\   |\n\
+\                            ||;;/|   /\n\
+\                            \\_|:||__|\n\
+\                             \\ ;||  /\n\
+\                             |= || =|\n\
+\                             |= /\\ =|\n\
+\                             /_/  \\_\\"
+
+serpienteArte = "\n\
+\    --..,_                     _,.--.\n\
+\       `'.'.                .'`__ o  `;__.      \n\
+\          '.'.            .'.'`  '---'`  `\n\
+\            '.`'--....--'`.'\n\
+\              `'--....--'`\n\
+\"
+
+hloboArte = "                        ,     ,\n\
+\                        |\\---/|\n\
+\                       /  , , |\n\
+\                  __.-'|  / \\ /\n\
+\         __ ___.-'        ._O|\n\
+\      .-'  '        :      _/\n\
+\     / ,    .        .     |\n\
+\    :  ;    :        :   _/\n\
+\    |  |   .'     __:   /\n\
+\    |  :   /'----'| \\  |\n\
+\    \\  |\\  |      | /| |\n\
+\     '.'| /       || \\ |\n\
+\     | /|.'       '.l \\_\n\
+\     || ||             '-'\n\
+\     '-''-'"
+
+dragonArte = "                \\||/\n\
+\                |  @___oo\n\
+\      /\\  /\\   / (__,,,,|\n\
+\     ) /^\\) ^\\/ _)\n\
+\     )   /^\\/   _)\n\
+\     )   _ /  / _)\n\
+\ /\\  )/\\/ ||  | )_)\n\
+\<  >      |(,,) )__)\n\
+\ ||      /    \\)___)\\\n\
+\ | \\____(      )___) )___\n\
+\  \\______(_______;;; __;;;"

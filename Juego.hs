@@ -12,12 +12,13 @@ import Matrices
 import Monstruos
 import Partida
 
--- Lee digito para seleccionar acción (por implementar)
+-- Lee digito para seleccionar acción (por implementar), lee un segundo dígito para descartar en "enter"
 leeDigito :: String -> IO Int
 leeDigito c = do
     hSetBuffering stdout NoBuffering
     putStr c 
     x <- getChar 
+    y <- getChar 
     putStr "\n"
     if isDigit x 
     then do return (read [x])
@@ -40,6 +41,11 @@ sufre pV (obj, valor) monst = pV - ((obtenerPuntosAtaqueMonstruo monst) * (divis
 division :: Int -> Monstruo -> Int
 division valor monst = (obtenerPuntosVidaMonstruo monst) `div` valor
 
+-- Hacemos que la dificultad del monstruo dependa de la posición considerando el numero x+y y el tamaño de la lista de mosntruos.
+enemigoDigno :: Partida -> [Monstruo] -> Monstruo
+enemigoDigno p@(m,a) ms = ms !! ((ubicacion * (length ms) `div` ((numColumnas m )+ (numColumnas m)))-1)
+    where ubicacion = (fst (obtenerPosicionAventurero a)) + (fst (obtenerPosicionAventurero a))
+
 -- Nuevo juego (con opcion a carga de partida por implementar)
 nuevoJuego :: IO ()
 nuevoJuego = do
@@ -51,7 +57,7 @@ nuevoJuego = do
         --cargarPartida
         else do 
             putChar '\n'
-            n <- leeDigito "Elije un tamaño de la mazmorra que quieres visitar: "
+            n <- leeDigito "Tu objetivo será llegar desde el extremo Noroeste de la mazmorra hasta su extremo Sureste. Elije un tamaño de la mazmorra que quieres visitar: "
             juego ((nuevaMazmorra n), nuevoAventurero)
 
 --Ejecución de un turno
@@ -72,7 +78,7 @@ juego partida@(mazmorra, aventurero) = do
             -- Muestra el contenido de la sala
             putStrLn "¡Ocurre un encuentro!"
             -- De momento solo hay opcion de enemigo pero podría ser algo positivo.
-            let enemigo = head listaMonstruos
+            let enemigo = enemigoDigno partida listaMonstruos
             imprimeMonstruo (obtenerArteMonstruo enemigo)
             putStrLn ((obtenerNombreMonstruo enemigo)++ ". Vida: " ++ (show (obtenerPuntosVidaMonstruo enemigo)) ++ " Ataque: " ++ (show (obtenerPuntosAtaqueMonstruo enemigo)))
             eleccion <- leeDigito "Elige en que dirección deseas moverte: usa las flechas para elegir: \n 1.Atacar \n 2.Huir \n"

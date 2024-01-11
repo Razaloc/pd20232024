@@ -3,8 +3,6 @@
 -- Universidad de Sevilla
 -- Rafael Garcia y Elena Ayora
 -- =====================================================================
-{-# LANGUAGE OverloadedStrings #-}
-
 import System.IO
 import Juego
 
