@@ -52,8 +52,7 @@ obtenerRecompensaMonstruo = recompensa
 -- Lista de monstruos (20 monstruos)
 listaMonstruos :: [Monstruo]
 listaMonstruos =
-    [ crearMonstruo "Dummy" 1 1 "" ("", 1)
-    , crearMonstruo "Limo de Moco Asqueroso" 2 1 limoArte ("palo con babas", 2)
+    [ crearMonstruo "Limo de Moco Asqueroso" 2 1 limoArte ("palo con babas", 2)
     , crearMonstruo "Araña Venenosa" 5 3 aranaArte ("Daga envenenada", 5)
     , crearMonstruo "Esqueleto Decrepito" 7 5 esqueletoArte ("Espada de hueso", 8)
     , crearMonstruo "Ogro Descomunal" 10 7 ogreArte ("Baston Descomunal", 10)
