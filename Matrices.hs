@@ -9,7 +9,6 @@ module Matrices
 
 
 import Data.Array
-import Data.Ratio
 
 
 --Esta parte debe ir al moduo de las matrices
@@ -27,6 +26,7 @@ type Matriz a = Array (Int,Int) a
 numColumnas ::  Matriz a -> Int
 numColumnas = snd . snd . bounds
 
+-- (Recursiva) (Por patrones)
 separa :: Int -> [a] -> [[a]]
 separa _ [] = []
 separa n xss = (take n xss):separa n (drop n xss)

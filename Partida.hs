@@ -30,6 +30,7 @@ import Matrices
 import Data.Array
 import Data.Ratio
 
+-- Datos algegraicos y uso
 type Partida = (Mazmorra, Aventurero)
 -- El tipo mazmorra representa el estado actual de la partida, es una matriz de ceros y unos que representan si una sala está resuelta o no.
 type Mazmorra = Matriz Char
@@ -118,7 +119,7 @@ actualizaAventurero a (x,y) =  a {posicion = (x,y)}
 
 -- Actualiza la posición del aventurero
 obtieneObjeto :: Aventurero -> Objeto -> Aventurero
-obtieneObjeto a o =  a {mochila = o}  
+obtieneObjeto a o =  a {mochila = o}
 
 
 -- Suma de dos tuplas que representan posiciones o movimientos
@@ -138,7 +139,7 @@ mueveEste (m,aventurero) = (m,(aventurero { posicion = (suma (posicion aventurer
 mueveOeste :: Partida -> Partida
 mueveOeste (m,aventurero) = (m,(aventurero { posicion = (suma (posicion aventurero) (-1,0))}))
 
--- Verificar que la posición no se sale de los márgenes de la mazmorra
+-- Verificar que la posición no se sale de los márgenes de la mazmorra. Guardas
 posicionValida :: Partida -> Bool
 posicionValida (m,a)
     | fst(posicion a) <= 0 = False
@@ -148,7 +149,7 @@ posicionValida (m,a)
     | otherwise = True
     where z = numColumnas m
 
--- Cambia la posicion del aventurero y devuelve el nuevo estado de la partida 
+-- Cambia la posicion del aventurero y devuelve el nuevo estado de la partida. Guardas
 mueve :: Partida -> Int -> Partida
 mueve p@(m,a) n
     | n == 1 =  (m, a{posicion = posicion (snd (mueveNorte p))})

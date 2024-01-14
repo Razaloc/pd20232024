@@ -58,7 +58,7 @@ listaMonstruos =
     , crearMonstruo "Ogro Descomunal" 10 7 ogreArte ("Baston Descomunal", 10)
     , crearMonstruo "Hombre Lobo Hambriento" 12 8 hloboArte ("Garras de lobo", 13)
     , crearMonstruo "Serpiente Gigante" 14 9 serpienteArte ("Lanza envenenada", 16)
-    , crearMonstruo "Minotauro Desorientado" 16 10 minotauroArte ("Baston Descomunal", 10)
+    , crearMonstruo "Minotauro Desorientado" 16 10 minotauroArte ("Baston Descomunal", 25)
     , crearMonstruo "Dragón de Pesadilla" 20 10 dragonArte ("Espada del elegido", 999)
     ]
 --  imprimeMonstruo (arte (listaMonstruos !!0))
